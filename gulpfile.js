@@ -1,6 +1,5 @@
 var gulp = require('gulp');
-var gutil = require('gulp-util');
-var concat = require('gulp-concat');
+var $ = require("gulp-load-plugins");
 
 // npm bundle packing
 var browserify = require('gulp-browserify');
@@ -31,14 +30,22 @@ gulp.task('html', function() {
 gulp.task('scripts', function() {
     return gulp.src('src/js/index.js')
         .pipe(browserify())
-        .pipe(concat('bundle.js'))
+        .pipe($.concat('bundle.js'))
+        .pipe(dest())
+        .pipe(livereload());
+});
+
+gulp.task('scripts', function() {
+    return gulp.src('src/js/index.js')
+        .pipe(browserify())
+        .pipe($.concat('bundle.js'))
         .pipe(dest())
         .pipe(livereload());
 });
 
 gulp.task('style', function() {
     gulp.src('./src/css/**')
-        .pipe(concat('style.css'))
+        .pipe($.concat('style.css'))
         .pipe(dest())
         .pipe(livereload());
 });
