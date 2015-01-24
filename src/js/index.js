@@ -3,4 +3,4 @@
 var _ = require('lodash');
 var Foo = require('./my-module');
 
-Foo(document.getElementById('content'), 'hello, world!');
+Foo(document.getElementById('content'), 'good, world!');

@@ -1,1 +1,12 @@
-  #last-clicked { font-family: monospace; }
+#last-clicked {
+  font-family: monospace;
+}
+
+body {
+    background-color: black;
+}
+
+.foo {
+    color: white;
+    font-size: 16px;
+}
