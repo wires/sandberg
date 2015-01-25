@@ -1,26 +1,24 @@
 var gulp = require('gulp');
-var httpProxy = require('http-proxy');
 var $ = require("gulp-load-plugins")();
 var fs = require("fs");
 
-httpProxy.createServer({
-    target: {
-        host: 'localhost',
-        port: 4000
-    },
-    ssl: {
-        key: fs.readFileSync('ssl/key.pem', 'utf8'),
-        cert: fs.readFileSync('ssl/cert.pem', 'utf8')
-    }
-}).listen(4009);
+var https = require('https');
+var pem = require('pem');
+var express = require('express');
+
+pem.createCertificate({days: 1, selfSigned: true}, function(err, keys) {
+
+    var app = express();
+    app.use(require('connect-livereload')());
+    app.use(express.static(__dirname + '/dist'));
+    //app.listen(4000);
+
+    https
+        .createServer({key: keys.serviceKey, cert: keys.certificate}, app)
+        .listen(4009);
+});
 
 // start express static file server
-var express = require('express');
-var app = express();
-app.use(require('connect-livereload')());
-app.use(express.static(__dirname + '/dist'));
-app.listen(4000);
-
 // start livereload server
 var livereload = require('gulp-livereload');
 
@@ -28,7 +26,7 @@ function dest() {
 	return gulp.dest('./dist/');
 }
 
-console.log("Live-reload server started at http://localhost:4000");
+console.log("Live-reload server started at http://localhost:4009");
 
 gulp.task('html', function() {
   return gulp.src('src/index.html')
