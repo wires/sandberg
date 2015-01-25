@@ -5,12 +5,12 @@
 //Foo(document.getElementById('content'), 'good, world!');
 
 var React = require("react");
-var Foo = require("./my-module");
+var Recorder = require("./recorder");
 
 // iPad nigga
 React.initializeTouchEvents(true);
 
 React.renderComponent(
-    Foo(),
+    Recorder(),
     document.getElementById("content")
 );
