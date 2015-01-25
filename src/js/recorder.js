@@ -74,7 +74,9 @@ module.exports = React.createClass({
         this.state.recorders.audio.stopRecording(function callback(data){
             console.log(data);
             this.state.recorders.video.stopRecording(function callback(){
-                console.log(this.refs.video.getDOMNode());
+
+                // pause preview window
+                this.refs.video.getDOMNode().pause();
                 this.setState({state: 'stopped'});
             }.bind(this));
         }.bind(this));
