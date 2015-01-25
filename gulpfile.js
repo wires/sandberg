@@ -1,9 +1,18 @@
 var gulp = require('gulp');
+var httpProxy = require('http-proxy');
 var $ = require("gulp-load-plugins")();
+var fs = require("fs");
 
-// npm bundle packing
-var browserify = require('gulp-browserify');
-
+httpProxy.createServer({
+    target: {
+        host: 'localhost',
+        port: 4000
+    },
+    ssl: {
+        key: fs.readFileSync('ssl/key.pem', 'utf8'),
+        cert: fs.readFileSync('ssl/cert.pem', 'utf8')
+    }
+}).listen(4009);
 
 // start express static file server
 var express = require('express');
@@ -27,21 +36,20 @@ gulp.task('html', function() {
       .pipe(livereload());
 });
 
-gulp.task('scripts', function() {
-    return gulp.src('src/js/index.js')
-        .pipe(browserify())
-        .on('prebundle', function(bundle) {
-            // React Dev Tools tab won't appear unless we expose the react bundle
-            bundle.require('react');
-        })
-        .pipe($.concat('bundle.js'))
+gulp.task('vendor', function() {
+    return gulp.src('vendor/**/*.js')
+        .pipe($.concat('vendor.js'))
         .pipe(dest())
         .pipe(livereload());
 });
 
 gulp.task('scripts', function() {
     return gulp.src('src/js/index.js')
-        .pipe(browserify())
+        .pipe($.browserify())
+        .on('prebundle', function(bundle) {
+            // React Dev Tools tab won't appear unless we expose the react bundle
+            bundle.require('react');
+        })
         .pipe($.concat('bundle.js'))
         .pipe(dest())
         .pipe(livereload());
@@ -54,8 +62,11 @@ gulp.task('style', function() {
         .pipe(livereload());
 });
 
-gulp.task('default', function(){
+gulp.task('build', ['vendor','style','scripts','html']);
 
+gulp.task('default', ['build'], function(){
+
+    gulp.watch('vendor/**/*.js', ['vendor']);
     gulp.watch('src/js/**/*.js', ['scripts']);
     gulp.watch('src/css/**/*.css', ['style']);
     gulp.watch('src/*.html', ['html']);
