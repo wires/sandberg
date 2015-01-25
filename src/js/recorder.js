@@ -1,5 +1,5 @@
 
-var RecordRTC = require("./RecordRTC");
+//var RecordRTC = require("./RecordRTC");
 var postFiles = require("./postfiles");
 
 var React = require("react");
@@ -35,8 +35,10 @@ module.exports = React.createClass({
             audioRecorder.startRecording();
 
             this.setState({
-                audioRecorder: audioRecorder,
-                videoRecorder: videoRecorder,
+                recorders: {
+                    audio: audioRecorder,
+                    video: videoRecorder
+                },
                 state: "recording"
             });
 
@@ -69,11 +71,13 @@ module.exports = React.createClass({
         //        } else postFiles(audioDataURL);
         //    });
         //}
-        this.state.audioRecorder.stopRecording(function callback(data){
+        this.state.recorders.audio.stopRecording(function callback(data){
             console.log(data);
-            this.state.videoRecorder.stopRecording();
+            this.state.recorders.video.stopRecording(function callback(){
+                console.log(this.refs.video.getDOMNode());
+                this.setState({state: 'stopped'});
+            }.bind(this));
         }.bind(this));
-        this.setState({state: 'stopped'});
     },
 
     haha: function() {
@@ -83,20 +87,23 @@ module.exports = React.createClass({
         return {foo:'bazz0r'};
     },
     render: function() {
-        return React.DOM.div({className: 'recorder'},[
-            React.DOM.div({className: 'preview'},[
+        return React.DOM.div({key: "r", className: 'recorder'},[
+            React.DOM.div({key: "p", className: 'preview'},[
                     React.DOM.video({
+                        key: "v",
                         ref: 'video',
                         width: "320px",
                         height: "240px"
                     })
                 ]),
-            React.DOM.div({className: 'controls'},[
+            React.DOM.div({className: 'controls',key: "c"},[
                     React.DOM.a({
+                        key: "start",
                         className: 'btn',
                         onClick: this.startRecording
                     }, 'Start'),
                     React.DOM.a({
+                        key: "stop",
                         className: 'btn',
                         onClick: this.stopRecording
                     }, 'Stop')

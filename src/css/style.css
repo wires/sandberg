@@ -3,23 +3,35 @@
 }
 
 body {
+    font-family: Arial, Helvetica;
     color: white;
     background-color: black;
 }
 
+.state {
+    font-family: monospace;
+    margin: 8px;
+    padding-top:8px;
+    display: block;
+}
+
 .btn {
+    display: inline-block;
     color: white;
     font-size: 16px;
-    padding: 8px;
-    border: 1px solid white;
-    background-color: #b5d592;
+    padding: 4px 8px;
+    border: 3px solid white;
     border-radius: 4px;
+    margin: 8px;
 }
 
 audio,
 video {
-    border: 1px solid white;
+    border-radius: 4px;
+    border: 3px solid white;
+    margin: 8px;
 }
+
 button[disabled],
 input[disabled] {
     background: rgba(216, 205, 205, 0.2);
