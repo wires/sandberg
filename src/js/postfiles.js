@@ -1,47 +1,68 @@
 
-// TODO this seems insecure
+// TODO setting filename from client seems insecure to me
 var randomString = require("rndm");
 
-module.exports = function postFiles(audioDataURL, videoDataURL) {
-    fileName = randomString();
-    var files = { };
+// this function submits both audio/video or single recorded blob to nodejs server
+module.exports = function postFiles(audio, video) {
+    // getting unique identifier for the file name
+    fileName = generateRandomString();
 
+    // this object is used to allow submitting multiple recorded blobs
+    var files = {};
+
+    // recorded audio blob
     files.audio = {
-        name: fileName + (isFirefox ? '.webm' : '.wav'),
-        type: isFirefox ? 'video/webm' : 'audio/wav',
-        contents: audioDataURL
+        name: fileName + '.' + audio.blob.type.split('/')[1],
+        type: audio.blob.type,
+        contents: audio.dataURL
     };
 
-    if (!isFirefox) {
+    if (video) {
         files.video = {
-            name: fileName + '.webm',
-            type: 'video/webm',
-            contents: videoDataURL
+            name: fileName + '.' + video.blob.type.split('/')[1],
+            type: video.blob.type,
+            contents: video.dataURL
         };
     }
 
-    files.isFirefox = isFirefox;
+    files.uploadOnlyAudio = !video;
 
-    cameraPreview.src = '';
-    cameraPreview.poster = '/ajax-loader.gif';
+    videoElement.src = '';
+    videoElement.poster = '/ajax-loader.gif';
 
     xhr('/upload', JSON.stringify(files), function(_fileName) {
         var href = location.href.substr(0, location.href.lastIndexOf('/') + 1);
-        cameraPreview.src = href + 'uploads/' + _fileName;
-        cameraPreview.play();
+        videoElement.src = href + 'uploads/' + _fileName;
+        videoElement.play();
+        videoElement.muted = false;
+        videoElement.controls = true;
 
         var h2 = document.createElement('h2');
-        h2.innerHTML = '<a href="' + cameraPreview.src + '">' + cameraPreview.src + '</a>';
+        h2.innerHTML = '<a href="' + videoElement.src + '">' + videoElement.src + '</a>';
         document.body.appendChild(h2);
     });
-};
 
+    if (mediaStream) mediaStream.stop();
+}
+
+// XHR2/FormData
 function xhr(url, data, callback) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if (request.readyState == 4 && request.status == 200) {
             callback(request.responseText);
         }
+    };
+
+    request.upload.onprogress = function(event) {
+        progressBar.max = event.total;
+        progressBar.value = event.loaded;
+        progressBar.innerHTML = 'Upload Progress ' + Math.round(event.loaded / event.total * 100) + "%";
+    };
+
+    request.upload.onload = function() {
+        percentage.style.display = 'none';
+        progressBar.style.display = 'none';
     };
     request.open('POST', url);
     request.send(data);

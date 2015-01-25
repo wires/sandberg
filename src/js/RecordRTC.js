@@ -92,21 +92,21 @@ function RecordRTC(mediaStream, config) {
 
         // Media Stream Recording API has not been implemented in chrome yet;
         // That's why using WebAudio API to record stereo audio in WAV format
-        var Recorder = isChrome ? window.StereoRecorder : window.MediaStreamRecorder;
+        var Recorder = isChrome ? StereoRecorder : MediaStreamRecorder;
 
         // video recorder (in WebM format)
         if (config.type === 'video' && isChrome) {
-            Recorder = window.WhammyRecorder;
+            Recorder = WhammyRecorder;
         }
 
         // video recorder (in Gif format)
         if (config.type === 'gif') {
-            Recorder = window.GifRecorder;
+            Recorder = GifRecorder;
         }
 
         // html2canvas recording!
         if (config.type === 'canvas') {
-            Recorder = window.CanvasRecorder;
+            Recorder = CanvasRecorder;
         }
 
         mediaRecorder = new Recorder(mediaStream);
@@ -1046,7 +1046,7 @@ function MediaStreamRecorder(mediaStream) {
 
             // starting a recording session; which will initiate "Reading Thread"
             // "Reading Thread" are used to prevent main-thread blocking scenarios
-            mediaRecorder = new window.MediaRecorder(mediaStream);
+            mediaRecorder = new MediaRecorder(mediaStream);
 
             // Dispatching OnDataAvailable Handler
             mediaRecorder.ondataavailable = function(e) {
@@ -2508,7 +2508,7 @@ function GifRecorder(mediaStream) {
         video.height = this.video.height;
 
         // external library to record as GIF images
-        gifEncoder = new window.GIFEncoder();
+        gifEncoder = new GIFEncoder();
 
         // void setRepeat(int iter) 
         // Sets the number of times the set of GIF frames should be played. 

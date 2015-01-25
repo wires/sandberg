@@ -7,7 +7,21 @@ body {
     background-color: black;
 }
 
-.foo {
+.btn {
     color: white;
     font-size: 16px;
+    padding: 8px;
+    border: 1px solid white;
+    background-color: #b5d592;
+    border-radius: 4px;
+}
+
+audio,
+video {
+    border: 1px solid white;
+}
+button[disabled],
+input[disabled] {
+    background: rgba(216, 205, 205, 0.2);
+    border: 1px solid rgb(233, 224, 224);
 }
