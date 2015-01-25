@@ -1,5 +1,5 @@
 var gulp = require('gulp');
-var $ = require("gulp-load-plugins");
+var $ = require("gulp-load-plugins")();
 
 // npm bundle packing
 var browserify = require('gulp-browserify');
@@ -30,6 +30,10 @@ gulp.task('html', function() {
 gulp.task('scripts', function() {
     return gulp.src('src/js/index.js')
         .pipe(browserify())
+        .on('prebundle', function(bundle) {
+            // React Dev Tools tab won't appear unless we expose the react bundle
+            bundle.require('react');
+        })
         .pipe($.concat('bundle.js'))
         .pipe(dest())
         .pipe(livereload());
