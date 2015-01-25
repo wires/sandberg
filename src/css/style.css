@@ -6,6 +6,8 @@ body {
     font-family: Arial, Helvetica;
     color: white;
     background-color: black;
+    margin: 0;
+    padding: 0;
 }
 
 .state {

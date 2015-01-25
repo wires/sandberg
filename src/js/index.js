@@ -7,10 +7,13 @@
 var React = require("react");
 var Recorder = React.createFactory(require("./recorder"));
 
+var Landingpage = require("./design/landingpage.jsx");
+
 // iPad nigga
 React.initializeTouchEvents(true);
 
 React.render(
-    Recorder({key: "recorder"}),
+    //Recorder({key: "recorder"}),
+    Landingpage(),
     document.getElementById("content")
 );

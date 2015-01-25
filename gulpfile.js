@@ -11,8 +11,6 @@ pem.createCertificate({days: 1, selfSigned: true}, function(err, keys) {
     var app = express();
     app.use(require('connect-livereload')());
     app.use(express.static(__dirname + '/dist'));
-    //app.listen(4000);
-
     https
         .createServer({key: keys.serviceKey, cert: keys.certificate}, app)
         .listen(4009);
@@ -34,6 +32,12 @@ gulp.task('html', function() {
       .pipe(livereload());
 });
 
+gulp.task('svg', function() {
+    return gulp.src('src/js/design/*.svg')
+        .pipe(dest())
+        .pipe(livereload());
+});
+
 gulp.task('vendor', function() {
     return gulp.src('vendor/**/*.js')
         .pipe($.concat('vendor.js'))
@@ -43,7 +47,11 @@ gulp.task('vendor', function() {
 
 gulp.task('scripts', function() {
     return gulp.src('src/js/index.js')
-        .pipe($.browserify())
+        .pipe($.browserify({
+            insertGlobals : false,
+            transform: ["reactify"],
+            extensions: ['.jsx']
+        }))
         .on('prebundle', function(bundle) {
             // React Dev Tools tab won't appear unless we expose the react bundle
             bundle.require('react');
@@ -60,12 +68,13 @@ gulp.task('style', function() {
         .pipe(livereload());
 });
 
-gulp.task('build', ['vendor','style','scripts','html']);
+gulp.task('build', ['vendor', 'style', 'scripts', 'svg', 'html']);
 
 gulp.task('default', ['build'], function(){
 
+    gulp.watch('src/js/design/*.svg', ['svg'])
     gulp.watch('vendor/**/*.js', ['vendor']);
-    gulp.watch('src/js/**/*.js', ['scripts']);
+    gulp.watch(['src/js/**/*.js','src/js/**/*.jsx'], ['scripts']);
     gulp.watch('src/css/**/*.css', ['style']);
     gulp.watch('src/*.html', ['html']);
 
