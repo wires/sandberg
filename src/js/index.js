@@ -8,12 +8,14 @@ var React = require("react");
 var Recorder = React.createFactory(require("./recorder"));
 
 var Landingpage = require("./design/landingpage.jsx");
+var Finalists = require("./design/finalists.jsx");
 
 // iPad nigga
 React.initializeTouchEvents(true);
 
 React.render(
     //Recorder({key: "recorder"}),
-    Landingpage(),
+    //Landingpage(),
+    Finalists(),
     document.getElementById("content")
 );
