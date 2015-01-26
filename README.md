@@ -11,15 +11,51 @@ Then
 This will start a webserver with `./dist/` as it's document root and
 with livereload script injection.
 
+	https://localhost:4009
+
 Every time you modify a file in `./src/` the page will live reload.
+*HHAHA* not anymore,.. it is served over HTTPS, but not livereload.
 
 ## HTTPS
 
 to *Allow Always* teh camera, one needs HTTPS.
 
-Create keypair `key.pem`, `cert.pem`
+script autogenerates PEM files:
 
-	mkdir ssl/
-	openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout ssl/key.pem -out ssl/cert.pem
+	var https = require('https');
+	var pem = require('pem');
+	var express = require('express');
+
+	pem.createCertificate({days: 1, selfSigned: true}, function(err, keys) {
+
+		var app = express();
+		app.use(require('connect-livereload')());
+		app.use(express.static(__dirname + '/dist'));
+		https
+			.createServer({key: keys.serviceKey, cert: keys.certificate}, app)
+			.listen(4009);
+	});
+
+## SVG processing
+
+Split SVG file using JS.
+
+	node svgproc.js
+
+Takes out the root group nodes matching a `id=...` regex.
 
 
+	var fs = require("fs");
+	var libxmljs = require("libxmljs");
+	var ns = {x: "http://www.w3.org/2000/svg"};
+
+	var xml = fs.readFileSync("src/svg/design.svg");
+	var xmlDoc = libxmljs.parseXmlString(xml);
+
+	var gchilds = xmlDoc.find('//x:svg/x:g', ns);
+
+	gchilds.forEach(function(gchild){
+		var fn = gchild.attr("id").value();
+		if (fn.match(/[a-zA-Z0-9]/))
+		{
+			// bla bla
