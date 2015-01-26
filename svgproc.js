@@ -9,7 +9,7 @@ var gchilds = xmlDoc.find('//x:svg/x:g', ns);
 
 gchilds.forEach(function(gchild){
 	var fn = gchild.attr("id").value();
-	if (fn.match(/[a-zA-Z0-9]/))
+	if (fn.match(/^[a-zA-Z0-9]+$/))
 	{
 		var s = svgDoc(gchild)
 		var target = 'dist/' + fn + '.svg'
