@@ -43,19 +43,22 @@ Split SVG file using JS.
 	node svgproc.js
 
 Takes out the root group nodes matching a `id=...` regex.
+Here is how that works, first some ceremony.
 
-
-	var fs = require("fs");
 	var libxmljs = require("libxmljs");
 	var ns = {x: "http://www.w3.org/2000/svg"};
-
 	var xml = fs.readFileSync("src/svg/design.svg");
 	var xmlDoc = libxmljs.parseXmlString(xml);
 
+Now, find *namespaced* SVG nodes
+
 	var gchilds = xmlDoc.find('//x:svg/x:g', ns);
+
+For each node, check id attribute value
 
 	gchilds.forEach(function(gchild){
 		var fn = gchild.attr("id").value();
-		if (fn.match(/[a-zA-Z0-9]/))
-		{
-			// bla bla
+		if (fn.match(/^[a-zA-Z0-9]+$/))
+			// here do magic
+
+
